@@ -1,4 +1,9 @@
-# mison_pison
+# Pison
+Pison is a bitmap structural index constructor with supports of intra-record parallelism. It generates leveled colon and comma bitmaps, so that queries can be quickly evaluated by directly jumping into relevant positions of the JSON record to find query matches. Comparing with existing solution -- Mison (add a link), Pison is always more efficient and has better scalability, especially for single bulky record processing. First, it features a redesign of the bottleneck step in Mison, which is not only simpler but more memory-efficient. Second, it is able to build structural indices for a single bulky record in parallel, enabled by a group of customized parallelization techniques. On the other hand, intra-record parallelism is not supported in Mison. In addition, the implementation of Pison is further optimized for better data locality.
+
+
+## Publication
+[1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. Scalable Bitwise Index Construction for JSON Data. PVLDB, 14(4): 2020.
 
 ## Overview
 **mison_pison** repository includes the source code and test scripts of Pison and our self-implemented Mison. All executable files are placed in `bin` folder, and all test scripts can be accessed from `scripts` folder. Each method has two scripts: `xxx_large_record.sh` for large record processing, `xxx_small_records.sh` for small records processing. Basically, there are four methods:
