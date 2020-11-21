@@ -3,78 +3,47 @@ Pison is a bitmap structural index constructor with supports of intra-record par
 
 
 ## Publication
-[1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. Scalable Bitwise Index Construction for JSON Data. PVLDB, 14(4): 2020.
+[1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. Scalable Bitwise Index Construction for JSON Analytics. PVLDB, 14(4): 2020.
 
-## Overview
-**mison_pison** repository includes the source code and test scripts of Pison and our self-implemented Mison. All executable files are placed in `bin` folder, and all test scripts can be accessed from `scripts` folder. Each method has two scripts: `xxx_large_record.sh` for large record processing, `xxx_small_records.sh` for small records processing. Basically, there are four methods:
-- **Mison**: self-implemented version (exe file: `mison_test`, test script: `mison_large_record.sh` and `mison_small_records.sh`);
-- **Pison**: uses all proposed techniques in paper (including word by word processing), supports sequential version for small records processing, and supports both sequential and parallel versions for large record processing (exe file: `pison_test`, test script: `pison_large_record.sh` and `pison_small_records.sh`);
-- **Mison+**: Mison with improved Step 2 and Step 3 in Pison during structural index construction (exe file: `mison+_test`, test script: `mison+_large_record.sh` and `mison+_small_records.sh`);
-- **Step-by-Step (SbS) Pison**: Pison without using Word-by-Word bitmap construction; similar as Pison, it supports both sequential and parallel versions for large record processing (exe file: `sbs_pison_test`, test script: `sbs_pison_large_record.sh` and `sbs_pison_small_records.sh`). 
+## Getting Started
+### Prerequisites
+- **Hardware**: CPU processors should support `64-bit ALU instructions`, `256-bit SIMD instruction set`, and the `carry-less multiplication instruction (pclmulqdq)`
+- **Operating System**: `Linux`
+- **C++ Compiler**: `g++` (7.4.0 or higher)
 
-All input datasets should be placed in `dataset` folder under the main directory `pison_evaluation`. 
+### Dataset
+Four sample datasets are included in `dataset` folder. Large datasets can be downloaded from https://drive.google.com/drive/folders/1KQ1DjvIWpHikOg1JgmjlSWM3aAlvq-h7?usp=sharing and placed into the `dataset` folder. 
 
-## Configuration
-The following configurations can be changed in certain test scripts before execution:
-- Compilation commands (like the following) in the corresponding test script can be commented out if there is no need to compile the program:
+### Create Example
+Create one `cpp` file in `example` folder and update `makefile` accordingly. There are four `cpp` files in `example` folder for reference.
+
+### Build
   ```
-  cd ..
   make clean
   make all
   ```
-- Commands for irrelevant datasets can be commented out from the test script if we want to check the performance of the specific dataset. Commands for each input dataset are organized into an `if` statement, like the following:
+### Run
+Assume executable example file is `example1`.
   ```
-  if [ -f "../../dataset/bestbuy_sample_large_record.json" ]; then
-      file_path="../../dataset/bestbuy_sample_large_record.json"
-      input_type="large"
-      ./pison_test ${file_path} ${input_type} INDEX_ONLY ${thread_num}
-      ./pison_test ${file_path} ${input_type} BB1 ${thread_num}
-  fi
-  ```
-- The number of threads for parallel Pison and SbS Pison is configurable in `scripts/pison_large_record.sh` `scripts/sbs_pison_large_record.sh` by changing the value of the following variable (default is 8):
-  ```
-  thread_num=8
+  cd bin
+  ./example1
   ```
 
-## Step-by-Step Instructions
-- **Step 1 (Optional)**: before starting performance evaluation, download large datasets from https://drive.google.com/drive/folders/1KQ1DjvIWpHikOg1JgmjlSWM3aAlvq-h7?usp=sharing and put them into dataset folder; this step can be skipped for the purpose of functional verification; 
-- **Step 2**: enter into `scripts` folder:
-  ```
-  cd scripts
-  ```
-- **Step 3**: change configurations in certain test scripts (see **Configuration** section);
-- **Step 4**: run test scripts, check the execution time for each test case and the number of output matches (take `pison_large_record.sh` for example):
-  ```
-  ./mison_large_record.sh
-  ./mison_small_records.sh
-  ./pison_large_record.sh
-  ./pison_small_records.sh
-  ./mison+_large_record.sh
-  ./mison+_small_records.sh
-  ./sbs_pison_large_record.sh
-  ./sbs_pison_small_records.sh
-  ```
-
-## Notes
-For Mac OS, before starting compilation, change `#include <malloc.h>` into `#include <malloc/malloc.h>` from relevant files, including:
-- `src/SerialBitmap.cpp`
-- `src/LocalBitmap.cpp`
-- `src/RecordLoader.h`
-- `src/ParallelBitmap.h`
-- `src/ParallelBitmapConstructor.h`
-
-During compilation, for errors like `cpu_set_t can't be recognized`, remove the code relevant to CPU affinity, like the following:
-```
-cpu_set_t mask;
-cpu_set_t get;
-CPU_ZERO(&mask);
-CPU_SET(thread_id, &mask);
-if(pthread_setaffinity_np(pthread_self(), sizeof(mask), &mask) < 0)
-    cout<<"CPU binding failed for thread "<<thread_id<<endl;
-```
-
-The following files contain the source code of CPU affinity:
-- `src/ParallelBitmapConstructor.h`
-- `src/ParallelBitmapIterator.cpp`
-- `demo/parallel_query.cpp`
-                                 
+## APIs
+### Records Loading (Class: RecordLoader)
+- `Records* loadSingleRecord(char* file_path)`: loads the input file as one single record (newline delimeter is considered as a part of record). 
+- `Records* loadRecords(char* file_path)`: loads multiple records from the input file. 
+### Generating Leveled Bitmap Indices (Class: BitmapConstructor)
+- `Bitmap* construct(Records* records, int rec_id, int thread_num = 1, int level = MAX_LEVEL, bool support_array = true)`: constructs leveled bitmaps for one specified record (indicated by `rec_id`) in parallel; bitmap indices can be created based on the maximum level of given queries. 
+- `BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
+### Bitmap Indices Iterator (Class: BitmapIterator)
+- `BitmapIterator* getCopy()`: gets a copy of an iterator.
+- `down()`: moves to the lower level of the leveled bitmaps.
+- `up()`: moves to the upper level of the leveled bitmaps.
+- `isObject()`: checks if the iterator points to an object.
+- `isArray()`: checks if the iterator points to an array.
+- `moveToKey(char* key)`: moves to the corresponding key field inside the current object.
+- `moveToKey(unordered_set<char*>& key_set)`: moves to one of the corresponding key fields inside the current object.
+- `moveToIndex(index) `: moves to a specific element in the current array.
+- `moveNext()`: moves to the next element in the current array.
+- `getValue()`: gets the value/element of the current key/array index.
