@@ -27,8 +27,7 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
 
 int main() {
     char* file_path = "../dataset/bestbuy_sample_small_records.json";
-    RecordLoader loader(file_path);
-    Records* recs = loader.loadRecords();
+    Records* recs = RecordLoader::loadRecords(file_path);
     if (recs == NULL) {
         cout<<"record loading fails."<<endl;
         return -1;

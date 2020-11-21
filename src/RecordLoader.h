@@ -17,13 +17,8 @@
 using namespace std;
 
 class RecordLoader{
-  private:
-    char* mFilePath;
-      
   public:
-    RecordLoader(char* file_path);
-    char* loadRecord();
-    Records* loadSingleRecord();
-    Records* loadRecords();
+    static Records* loadSingleRecord(char* file_path);
+    static Records* loadRecords(char* file_path);
 };
 #endif

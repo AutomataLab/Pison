@@ -4,46 +4,9 @@ using namespace std;
 
 #define MAX_PAD 64
 
-RecordLoader::RecordLoader(char* file_path){
-    mFilePath = file_path;
-}
-
-char* RecordLoader::loadRecord() {
-    char* file_name = mFilePath;
+Records* RecordLoader::loadSingleRecord(char* file_path) {
     unsigned long size;
-    FILE* fp = fopen (file_name,"rb");
-    if (fp == NULL) {
-        return NULL;
-    }
-    fseek (fp, 0, SEEK_END);
-    size = ftell(fp);
-    rewind(fp);
-    void* p;
-    if (posix_memalign(&p, 64, (size + MAX_PAD)*sizeof(char)) != 0) {
-        cout<<"Fail to allocate memory space for input record."<<endl;
-    }
-    char* record = (char*) p;
-    size_t load_size = fread (record, 1, size, fp);
-    if (load_size == 0) {
-        cout<<"Fail to load the input record into memory"<<endl;
-    }
-    int remain = 64 - (size % 64);
-    int counter = 0;
-    // pad the input data where its size can be divided by 64 
-    while (counter < remain)
-    {
-        record[size+counter] = 'd';
-        counter++;
-    }
-    record[size+counter]='\0';
-    fclose(fp);
-    return record;
-}
-
-Records* RecordLoader::loadSingleRecord() {
-    char* file_name = mFilePath;
-    unsigned long size;
-    FILE* fp = fopen (file_name,"rb");
+    FILE* fp = fopen (file_path,"rb");
     if (fp == NULL) {
         return NULL;
     }
@@ -80,9 +43,8 @@ Records* RecordLoader::loadSingleRecord() {
     return records;
 }
 
-Records* RecordLoader::loadRecords() {
-    char* file_name = mFilePath;
-    FILE *fp = fopen(file_name, "r");
+Records* RecordLoader::loadRecords(char* file_path) {
+    FILE *fp = fopen(file_path, "r");
     Records* records = new Records();
     if (fp) {
         records->rec_start_pos = new long[MAX_NUM_RECORD];

@@ -11,8 +11,7 @@ using namespace std;
 void testPisonSmallRecords(char* file_path, query_callback qry = NULL, int level = MAX_LEVEL, bool support_array = true, bool print = true) {
     struct timeval begin,end;
     double duration;
-    RecordLoader loader(file_path);
-    Records* recs = loader.loadRecords();;
+    Records* recs = RecordLoader::loadRecords(file_path);
     if (recs == NULL) {
         cout<<"record loading fails."<<endl;
         return;
@@ -68,8 +67,7 @@ void testPisonSmallRecords(char* file_path, query_callback qry = NULL, int level
 void testPisonSmallRecordsSpecial(char* file_path, query_callback qry = NULL, int level = MAX_LEVEL, bool support_array = true) {
     struct timeval begin,end;
     double duration;
-    RecordLoader loader(file_path);
-    Records* recs = loader.loadRecords();;
+    Records* recs = RecordLoader::loadRecords(file_path);
     if (recs == NULL) {
         cout<<"record loading fails."<<endl;
         return;
@@ -123,8 +121,7 @@ void testPisonSmallRecordsSpecial(char* file_path, query_callback qry = NULL, in
 void testPison(char* file_path, query_callback qry = NULL, int level = MAX_LEVEL, bool support_array = true, bool print = true) {
     struct timeval begin,end;
     double duration;
-    RecordLoader loader(file_path);
-    Records* records = loader.loadSingleRecord();
+    Records* records = RecordLoader::loadSingleRecord(file_path);
     if (records == NULL) {
         cout<<"record loading fails."<<endl;
         return;
@@ -183,8 +180,7 @@ void testPison(char* file_path, query_callback qry = NULL, int level = MAX_LEVEL
 void testPisonParallel(char* file_path, int thread_num, parallel_query_callback qry = NULL, int level = MAX_LEVEL, bool support_array = true) {
     struct timeval begin,end;
     double duration;
-    RecordLoader loader(file_path);
-    Records* records = loader.loadSingleRecord();
+    Records* records = RecordLoader::loadSingleRecord(file_path);
     if (records == NULL) {
         cout<<"record loading fails."<<endl;
         return;

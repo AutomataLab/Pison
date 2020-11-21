@@ -24,8 +24,7 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
 
 int main() {
     char* file_path = "../dataset/twitter_sample_large_record.json";
-    RecordLoader loader(file_path);
-    Records* recs = loader.loadSingleRecord();;
+    Records* recs = RecordLoader::loadSingleRecord(file_path);
     if (recs == NULL) {
         cout<<"record loading fails."<<endl;
         return -1;

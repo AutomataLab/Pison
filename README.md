@@ -30,11 +30,11 @@ Assume executable example file is `example1`.
 
 ## APIs
 ### Records Loading (Class: RecordLoader)
-- `Records* loadSingleRecord(char* file_path)`: loads the input file as one single record (newline delimeter is considered as a part of record). 
-- `Records* loadRecords(char* file_path)`: loads multiple records from the input file. 
+- `static Records* loadSingleRecord(char* file_path)`: loads the input file as one single record (newline delimeter is considered as a part of record). 
+- `static Records* loadRecords(char* file_path)`: loads multiple records from the input file. 
 ### Generating Leveled Bitmap Indices (Class: BitmapConstructor)
-- `Bitmap* construct(Records* records, int rec_id, int thread_num = 1, int level = MAX_LEVEL, bool support_array = true)`: constructs leveled bitmaps for one specified record (indicated by `rec_id`) in parallel; bitmap indices can be created based on the maximum level of given queries (indicated by `level`). 
-- `BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
+- `static Bitmap* construct(Records* records, int rec_id, int thread_num = 1, int level = MAX_LEVEL, bool support_array = true)`: constructs leveled bitmaps for one specified record (indicated by `rec_id`) in parallel; bitmap indices can be created based on the maximum level of given queries (indicated by `level`). 
+- `static BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
 ### Bitmap Indices Iterator (Class: BitmapIterator)
 - `BitmapIterator* getCopy()`: gets a copy of an iterator (used for parallel accessing).
 - `down()`: moves to the lower level of the leveled bitmaps.
