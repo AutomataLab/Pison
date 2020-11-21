@@ -46,3 +46,6 @@ Assume executable example file is `example1`.
 - `moveToIndex(index) `: moves to a specific element in the current array.
 - `moveNext()`: moves to the next element in the current array.
 - `getValue()`: gets the value/element of the current key/array index.
+
+## Note
+`test` folder contains the test code for running all queries used in the evaluation section of our paper [1], `script` folder contains the test scripts for compiling the code and reporting the execution time automatically. Before running these scripts, please download large datasets from https://drive.google.com/drive/folders/1KQ1DjvIWpHikOg1JgmjlSWM3aAlvq-h7?usp=sharing and put them into `dataset` folder. 
