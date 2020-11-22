@@ -37,15 +37,16 @@ Assume executable example file is `example1`.
 - `static BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
 ### Bitmap Indices Iterator (Class: BitmapIterator)
 - `BitmapIterator* getCopy()`: gets a copy of an iterator (used for parallel accessing).
-- `down()`: moves to the lower level of the leveled bitmaps.
-- `up()`: moves to the upper level of the leveled bitmaps.
-- `isObject()`: checks if the iterator points to an object.
-- `isArray()`: checks if the iterator points to an array.
-- `moveToKey(char* key)`: moves to the corresponding key field inside the current object.
-- `moveToKey(unordered_set<char*>& key_set)`: moves to one of the corresponding key fields inside the current object.
-- `moveToIndex(index) `: moves to a specific element in the current array.
-- `moveNext()`: moves to the next element in the current array.
-- `getValue()`: gets the value/element of the current key/array index.
+- `bool down()`: moves to the lower level of the leveled bitmaps.
+- `bool up()`: moves to the upper level of the leveled bitmaps.
+- `bool isObject()`: checks if the iterator points to an object.
+- `bool isArray()`: checks if the iterator points to an array.
+- `bool moveToKey(char* key)`: moves to the corresponding key field inside the current object.
+- `bool moveToKey(unordered_set<char*>& key_set)`: moves to one of the corresponding key fields inside the current object.
+- `bool moveToIndex(index) `: moves to a specific element in the current array.
+- `bool moveNext()`: moves to the next element in the current array.
+- `char* getValue()`: gets the value/element of the current key/array index.
+- `int numArrayElements()`: gets the number of elements inside the current array.
 
 ## Note
 `test` folder contains the test code for running all queries used in the evaluation section of our paper [1], `script` folder contains the test scripts for compiling the code and reporting the execution time automatically. Before running these scripts, please download large datasets from https://drive.google.com/drive/folders/1KQ1DjvIWpHikOg1JgmjlSWM3aAlvq-h7?usp=sharing and put them into `dataset` folder. 
