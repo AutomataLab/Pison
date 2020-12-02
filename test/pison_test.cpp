@@ -185,11 +185,11 @@ void testPisonParallel(char* file_path, int thread_num, parallel_query_callback 
         cout<<"record loading fails."<<endl;
         return;
     }
-    int num_iterations = 20;
+    int num_iterations = 10;
     vector<double> idx_construction_time;
     vector<double> query_exe_time;
     long output_size = 0;
-    for (int i = 1; i <= num_iterations; ++i) {
+    for (int i = 1; i <= 10 + num_iterations; ++i) {
         gettimeofday(&begin,NULL);
         int rec_id = 0;
         Bitmap* bm = BitmapConstructor::construct(records, rec_id, thread_num, level, support_array);
@@ -197,7 +197,7 @@ void testPisonParallel(char* file_path, int thread_num, parallel_query_callback 
         duration=1000000*(end.tv_sec-begin.tv_sec)+end.tv_usec-begin.tv_usec;
         // cout<<"finish index construction "<<endl;
         double time = duration / (double) 1000000;
-        idx_construction_time.push_back(time);
+        if (i > 10) idx_construction_time.push_back(time);
         if (qry != NULL) {
             gettimeofday(&begin,NULL);
             BitmapIterator* iter = BitmapConstructor::getIterator(bm);

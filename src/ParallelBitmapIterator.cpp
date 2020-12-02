@@ -26,7 +26,6 @@ CommaPosInfo comma_pos_info[MAX_THREAD];
 int num_of_threads = 1;
 
 void* generateCommaPositionsInThread(void* arg) {
-    //CommaPosInfo comma_pos_info = (CommaPosInfo)(*((CommaPosInfo*)arg));
     int thread_id = (int)(*((int*)arg));;
     int level = comma_pos_info[thread_id].level;
     long start_pos = comma_pos_info[thread_id].start_pos;
@@ -67,33 +66,30 @@ void* generateCommaPositionsInThread(void* arg) {
 }
 
 void ParallelBitmapIterator::generateCommaPositionsParallel(long start_pos, long end_pos, int level, long* comma_positions, long& top_comma_positions) {
-    // find starting and ending threads from metadata table
-    int start_thread = -1;
-    int end_thread = -1;
-    int thread_num = mParallelBitmap->mThreadNum;
-    num_of_threads = thread_num;
-    for (int i = mPrevThreadId; i < thread_num; ++i) {
+    // find starting and ending chunks in linked leveled comma bitmaps
+    int start_chunk = -1;
+    int end_chunk = -1;
+    int chunk_num = mParallelBitmap->mThreadNum;
+    for (int i = mCurChunkId; i < chunk_num; ++i) {
         if (pb_metadata[i].start_word_id <= (start_pos / 64)) {
-            start_thread = i;
+            start_chunk = i;
         }
-        if (pb_metadata[i].end_word_id >= (ceil(double(end_pos) / 64)) && end_thread == -1) {
-            end_thread = i;
+        if (pb_metadata[i].end_word_id >= (ceil(double(end_pos) / 64)) && end_chunk == -1) {
+            end_chunk = i;
         }
-        if (start_thread > -1 && end_thread > -1) break;
+        if (start_chunk > -1 && end_chunk > -1) break;
     }
-    if(start_thread == 0 && end_thread == -1) end_thread = 0;
-    mPrevThreadId = start_thread;
+    if(start_chunk == 0 && end_chunk == -1) end_chunk = 0;
+    mCurChunkId = start_chunk;
     pthread_t thread[MAX_THREAD];
     int thread_args[MAX_THREAD];
-    // iterate through leveled comma bitmaps generated from relevant threads
-    for (int i = start_thread; i <= end_thread; ++i) {
-        thread_args[i] = i; 
+    // iterate through corresponding linked leveled comma bitmaps
+    for (int i = start_chunk; i <= end_chunk; ++i) {
+        thread_args[i] = i;
         comma_pos_info[i].thread_id = i;
         comma_pos_info[i].level = level;
         comma_pos_info[i].start_pos = start_pos;
         comma_pos_info[i].end_pos = end_pos;
-        //comma_pos_info[i].comma_positions = NULL;
-        //comma_pos_info[i].top_comma_positions = -1; 
         int rc = pthread_create(&thread[i], NULL, generateCommaPositionsInThread, &thread_args[i]);
         if (rc)
         {
@@ -101,7 +97,7 @@ void ParallelBitmapIterator::generateCommaPositionsParallel(long start_pos, long
             return;
         }
     }
-    for (int i = start_thread; i <= end_thread; ++i) {
+    for (int i = start_chunk; i <= end_chunk; ++i) {
         int rc = pthread_join(thread[i], NULL);
         if (rc)
         {
@@ -109,7 +105,7 @@ void ParallelBitmapIterator::generateCommaPositionsParallel(long start_pos, long
             return;
         }
     }
-    for (int i = start_thread; i <= end_thread; ++i) {
+    for (int i = start_chunk; i <= end_chunk; ++i) {
         for (int j = 0; j <= comma_pos_info[i].top_comma_positions; ++j) {
             comma_positions[++top_comma_positions] = comma_pos_info[i].comma_positions[j];
         }
@@ -119,50 +115,51 @@ void ParallelBitmapIterator::generateCommaPositionsParallel(long start_pos, long
 
 // Saving metadata of linked leveled bitmap in consecutive order can further improve the performance.
 void ParallelBitmapIterator::gatherParallelBitmapInfo() {
-    int thread_num = mParallelBitmap->mThreadNum;
+    int chunk_num = mParallelBitmap->mThreadNum;
     int depth = mParallelBitmap->mDepth;
-    for (int i = 0; i < thread_num; ++i) {
-        pb_metadata[i].start_word_id = mParallelBitmap->mBitmaps[i]->mStartWordId;
-        pb_metadata[i].end_word_id = mParallelBitmap->mBitmaps[i]->mEndWordId;
-        pb_metadata[i].quote_bitmap = mParallelBitmap->mBitmaps[i]->mQuoteBitmap;
+    for (int chunk_id = 0; chunk_id < chunk_num; ++chunk_id) {
+        pb_metadata[chunk_id].start_word_id = mParallelBitmap->mBitmaps[chunk_id]->mStartWordId;
+        pb_metadata[chunk_id].end_word_id = mParallelBitmap->mBitmaps[chunk_id]->mEndWordId;
+        pb_metadata[chunk_id].quote_bitmap = mParallelBitmap->mBitmaps[chunk_id]->mQuoteBitmap;
         for (int l = 0; l <= depth; ++l) {
-            pb_metadata[i].lev_colon_bitmap[l] = mParallelBitmap->mBitmaps[i]->mFinalLevColonBitmap[l];
-            pb_metadata[i].lev_comma_bitmap[l] = mParallelBitmap->mBitmaps[i]->mFinalLevCommaBitmap[l];
+            pb_metadata[chunk_id].lev_colon_bitmap[l] = mParallelBitmap->mBitmaps[chunk_id]->mFinalLevColonBitmap[l];
+            pb_metadata[chunk_id].lev_comma_bitmap[l] = mParallelBitmap->mBitmaps[chunk_id]->mFinalLevCommaBitmap[l];
         }
     }
 }
 
 void ParallelBitmapIterator::generateColonPositions(long start_pos, long end_pos, int level, long* colon_positions, long& top_colon_positions) {
-    // find starting and ending threads from metadata table
-    int start_thread = -1;
-    int end_thread = -1;
+    // find starting and ending chunks in linked leveled colon bitmaps
+    int start_chunk = -1;
+    int end_chunk = -1;
     int thread_num = mParallelBitmap->mThreadNum;
-    for (int i = mPrevThreadId; i < thread_num; ++i) {
+    for (int i = mCurChunkId; i < thread_num; ++i) {
         if (pb_metadata[i].start_word_id <= (start_pos / 64)) {
-            start_thread = i;
+            start_chunk = i;
         }
-        if (pb_metadata[i].end_word_id >= (ceil(double(end_pos) / 64)) && end_thread == -1) {
-            end_thread = i;
+        if (pb_metadata[i].end_word_id >= (ceil(double(end_pos) / 64)) && end_chunk == -1) {
+            end_chunk = i;
         }
-        if (start_thread > -1 && end_thread > -1) break;
+        if (start_chunk > -1 && end_chunk > -1) break;
     }
-    if(start_thread == 0 && end_thread == -1) end_thread = 0;
-    mPrevThreadId = start_thread;
-    // iterate through leveled colon bitmaps generated from relevant threads
-    while (start_thread <= end_thread) {
-        unsigned long* levels = pb_metadata[start_thread].lev_colon_bitmap[level];
+    if(start_chunk == 0 && end_chunk == -1) end_chunk = 0;
+    mCurChunkId = start_chunk;
+    // iterate through the corresponding linked leveled colon bitmaps
+    int cur_chunk = start_chunk;
+    while (cur_chunk <= end_chunk) {
+        unsigned long* levels = pb_metadata[cur_chunk].lev_colon_bitmap[level];
         if (levels == NULL) {
-            ++start_thread;
+            ++cur_chunk;
             continue;
         } 
         unsigned long colonbit;
-        long cur_start_pos = pb_metadata[start_thread].start_word_id;
-        long cur_end_pos = pb_metadata[start_thread].end_word_id;
+        long cur_start_pos = pb_metadata[cur_chunk].start_word_id;
+        long cur_end_pos = pb_metadata[cur_chunk].end_word_id;
         long st = cur_start_pos > (start_pos / 64) ? cur_start_pos : (start_pos / 64);
         long ed = cur_end_pos < (ceil(double(end_pos) / 64)) ? cur_end_pos : (ceil(double(end_pos) / 64));
         for (long i = st; i < ed; ++i) {
             unsigned long idx = 0;
-            if (start_thread >= 1) idx = i - cur_start_pos;
+            if (cur_chunk >= 1) idx = i - cur_start_pos;
             else idx = i;
             colonbit = levels[idx];
             int cnt = __builtin_popcountl(colonbit);
@@ -174,41 +171,42 @@ void ParallelBitmapIterator::generateColonPositions(long start_pos, long end_pos
                 colonbit = colonbit & (colonbit - 1);
             }
         }
-        ++start_thread;
+        ++cur_chunk;
     }
 }
 
 void ParallelBitmapIterator::generateCommaPositions(long start_pos, long end_pos, int level, long* comma_positions, long& top_comma_positions) {
-    // find starting and ending threads from metadata table
-    int start_thread = -1;
-    int end_thread = -1;
-    int thread_num = mParallelBitmap->mThreadNum;
-    for (int i = mPrevThreadId; i < thread_num; ++i) {
+    // find starting and ending chunks in linked leveled comma bitmaps
+    int start_chunk = -1;
+    int end_chunk = -1;
+    int chunk_num = mParallelBitmap->mThreadNum;
+    for (int i = mCurChunkId; i < chunk_num; ++i) {
         if (pb_metadata[i].start_word_id <= (start_pos / 64)) {
-            start_thread = i;
+            start_chunk = i;
         }
-        if (pb_metadata[i].end_word_id >= (ceil(double(end_pos) / 64)) && end_thread == -1) {
-            end_thread = i;
+        if (pb_metadata[i].end_word_id >= (ceil(double(end_pos) / 64)) && end_chunk == -1) {
+            end_chunk = i;
         }
-        if (start_thread > -1 && end_thread > -1) break;
+        if (start_chunk > -1 && end_chunk > -1) break;
     }
-    if(start_thread == 0 && end_thread == -1) end_thread = 0;
-    mPrevThreadId = start_thread;
-    // iterate through leveled comma bitmaps generated from relevant threads
-    while (start_thread <= end_thread) {
-        unsigned long* levels = pb_metadata[start_thread].lev_comma_bitmap[level];
+    if(start_chunk == 0 && end_chunk == -1) end_chunk = 0;
+    mCurChunkId = start_chunk;
+    // iterate through the corresponding linked leveled comma bitmaps
+    int cur_chunk = start_chunk; 
+    while (cur_chunk <= end_chunk) {
+        unsigned long* levels = pb_metadata[cur_chunk].lev_comma_bitmap[level];
         if (levels == NULL) {
-            ++start_thread;
+            ++cur_chunk;
             continue;
         }
         unsigned long commabit;
-        long cur_start_pos = pb_metadata[start_thread].start_word_id;
-        long cur_end_pos = pb_metadata[start_thread].end_word_id;
+        long cur_start_pos = pb_metadata[cur_chunk].start_word_id;
+        long cur_end_pos = pb_metadata[cur_chunk].end_word_id;
         long st = cur_start_pos > (start_pos / 64) ? cur_start_pos : (start_pos / 64);
         long ed = cur_end_pos < (ceil(double(end_pos) / 64)) ? cur_end_pos : (ceil(double(end_pos) / 64));
         for (long i = st; i < ed; ++i) {
             unsigned long idx = 0;
-            if (start_thread >= 1) idx = i - cur_start_pos;
+            if (cur_chunk >= 1) idx = i - cur_start_pos;
             else idx = i;
             commabit = levels[idx];
             int cnt = __builtin_popcountl(commabit);
@@ -220,7 +218,7 @@ void ParallelBitmapIterator::generateCommaPositions(long start_pos, long end_pos
                 commabit = commabit & (commabit - 1);
             }
         }
-        ++start_thread;
+        ++cur_chunk;
     }
 }
 
@@ -230,31 +228,30 @@ bool ParallelBitmapIterator::findFieldQuotePos(long colon_pos, long& start_pos, 
     long start_quote = 0;
     long end_quote = 0;
     start_pos = 0; end_pos = 0;
-    int thread_id = -1;
-    int thread_num = mParallelBitmap->mThreadNum;
-    // find the thread which generates the current colon
-    for (int i = mPrevThreadId; i < thread_num; ++i) {
+    int cur_chunk = -1;
+    int chunk_num = mParallelBitmap->mThreadNum;
+    // find the chunk where the current colon is in
+    for (int i = mCurChunkId; i < chunk_num; ++i) {
         if (w_id >= pb_metadata[i].start_word_id && w_id < pb_metadata[i].end_word_id) {
-            thread_id = i;
-            mPrevThreadId = thread_id;
+            cur_chunk = i;
+            mCurChunkId = cur_chunk;
             break;
         }
     }
-    if (thread_id == -1) {
+    if (cur_chunk == -1) {
         return false;
     }
     while (w_id >= 0)
     {
-        // check whether the thread id needs to be updated         
-        if (w_id < pb_metadata[thread_id].start_word_id) {
-            //cout<<"update thread id "<<thread_id<<endl;
-            if ((--thread_id) == -1) {
+        // check whether the current chunk needs to be updated  
+        if (w_id < pb_metadata[cur_chunk].start_word_id) {
+            //cout<<"update chunk id "<<cur_chunk<<endl;
+            if ((--cur_chunk) == -1) {
                 return false;
             }
-            mPrevThreadId = thread_id;
         }
-        long quote_id = w_id - pb_metadata[thread_id].start_word_id;
-        unsigned long quotebit = pb_metadata[thread_id].quote_bitmap[quote_id];
+        long quote_id = w_id - pb_metadata[cur_chunk].start_word_id;
+        unsigned long quotebit = pb_metadata[cur_chunk].quote_bitmap[quote_id];
         unsigned long offset = w_id * 64 + __builtin_ctzll(quotebit);
         while (quotebit && offset < colon_pos)
         {
@@ -300,7 +297,7 @@ ParallelBitmapIterator* ParallelBitmapIterator::getCopy() {
     pbi->mParallelBitmap = mParallelBitmap;
     pbi->mCurLevel = mCurLevel;
     pbi->mTopLevel = mCurLevel;
-    pbi->mPrevThreadId = mPrevThreadId;
+    pbi->mCurChunkId = mCurChunkId;
     pbi->mFindDomArray = mFindDomArray;
     if (pbi->mTopLevel >= 0) {
         pbi->mCtxInfo[mCurLevel].type = mCtxInfo[mCurLevel].type;
