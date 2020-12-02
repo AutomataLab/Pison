@@ -234,7 +234,6 @@ bool ParallelBitmapIterator::findFieldQuotePos(long colon_pos, long& start_pos, 
     for (int i = mCurChunkId; i < chunk_num; ++i) {
         if (w_id >= pb_metadata[i].start_word_id && w_id < pb_metadata[i].end_word_id) {
             cur_chunk = i;
-            mCurChunkId = cur_chunk;
             break;
         }
     }
