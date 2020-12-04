@@ -1,8 +1,13 @@
 # Pison
-Pison is a bitwise structural index constructor with supports of intra-record parallelism. It generates leveled colon and comma bitmaps, so that queries can be quickly evaluated by directly jumping into relevant positions of the JSON record to find query matches. It parallelizes the existing (serial) structural indices construction process ([Y. Li, N. R. Katsipoulakis, B. Chandramouli, J. Goldstein, and D. Kossmann. Mison: a fast JSON parser for data analytics. In *VLDB*, 2017](http://www.vldb.org/pvldb/vol10/p1118-li.pdf)) for JSON analytics, which has already been proved to be highly efficient thanks to the use of the SIMD and bitwise operations. As a result, Pison can even build leveled bitmap indices with multiple threads, maximizing utilization of modern CPUs. For more details about Pison, please refer to our paper [1].
+Pison builds structural index (in bitmaps) for JSON records to accelerate JSON analytics. 
+It leverages both coarse-grained (multicore) parallelism and fine-grained (bitwise and SIMD) parallelism to make index construction efficient.
+For more details about Pison, please refer to our paper [1].
 
-## Publication
+The original idea of JSON structural index construction was proposed by in Mison[2]. The major improvement of Pison over Mison is the capability of building structure index for **a single large JSON record** in parallel. In addition, it adopts bitwise operations from [simdjson](https://github.com/simdjson/simdjson) to further enhance the performance. 
+
+## Publications
 [1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. Scalable Bitwise Index Construction for JSON Analytics. PVLDB, 14(4): 2021.
+[2] Y. Li, N. R. Katsipoulakis, B. Chandramouli, J. Goldstein, and D. Kossmann. Mison: a fast JSON parser for data analytics. In *VLDB*, 2017
 
 ## Getting Started
 ### Prerequisites
