@@ -7,6 +7,7 @@ The original idea of JSON structural index construction was proposed by in Mison
 
 ## Publications
 [1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. Scalable Bitwise Index Construction for JSON Analytics. PVLDB, 14(4): 2021.
+
 [2] Y. Li, N. R. Katsipoulakis, B. Chandramouli, J. Goldstein, and D. Kossmann. Mison: a fast JSON parser for data analytics. In *VLDB*, 2017
 
 ## Getting Started
