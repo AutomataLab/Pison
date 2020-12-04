@@ -3,7 +3,7 @@ Pison builds structural index (in bitmaps) for JSON records to accelerate JSON a
 It leverages both coarse-grained (multicore) parallelism and fine-grained (bitwise and SIMD) parallelism to make index construction efficient.
 For more details about Pison, please refer to our paper [1].
 
-The original idea of JSON structural index construction was proposed in Mison [2]. The major improvement of Pison over Mison is the capability of building structure index for **a single large JSON record** in parallel. In addition, it adopts bitwise operations from [simdjson](https://github.com/simdjson/simdjson) to further enhance the performance. 
+The original idea of JSON structural index construction was proposed in Mison [2]. The major improvement of Pison over Mison is the capability of building structure index for **a single large JSON record** in parallel. In addition, it optimizes the index construction steps, including adopting some bitwise operations used in [simdjson](https://github.com/simdjson/simdjson), to further enhance the performance. 
 
 ## Publications
 [1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. Scalable Bitwise Index Construction for JSON Analytics. PVLDB, 14(4): 2021.
