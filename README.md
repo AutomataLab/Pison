@@ -13,8 +13,8 @@ Pison is a bitwise structural index constructor with supports of intra-record pa
 ### Dataset
 Four sample datasets are included in `dataset` folder. Large datasets can be downloaded from https://drive.google.com/drive/folders/1KQ1DjvIWpHikOg1JgmjlSWM3aAlvq-h7?usp=sharing and placed into the `dataset` folder. 
 
-### Create Example
-Create one `cpp` file in `example` folder and update `makefile` accordingly. There are four `cpp` files in `example` folder for reference.
+### Examples
+A few examples (in `cpp` files) are provided in the `example` folder. They demostrate how to use our APIs to implement JSON queries. To create and test your examples, please update the `makefile` accordingly.
 
 ### Build
   ```
