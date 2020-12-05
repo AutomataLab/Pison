@@ -8,9 +8,11 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
         if (iter->down() == false) return; /* value of "categoryPath" */
         if (iter->isArray()) {
             for (int idx = 1; idx <= 2; ++idx) {
+                // 2nd and 3rd elements inside "categoryPath" array
                 if (iter->moveToIndex(idx)) {
                     if (iter->down() == false) continue;
                     if (iter->isObject() && iter->moveToKey("id")) {
+                        // value of "id"
                         char* value = iter->getValue();
                         output.append(value);
                         output.append("|");

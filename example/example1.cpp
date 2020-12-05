@@ -5,7 +5,7 @@
 // $[*].user.id
 void query(BitmapIterator* iter, string& output, long& output_size) {
     while (iter->isArray() && iter->moveNext() == true) {
-        if (iter->down() == false) continue;
+        if (iter->down() == false) continue;  /* array element on the top level */
         if (iter->isObject() && iter->moveToKey("user")) {
             if (iter->down() == false) return; /* value of "user" */
             if (iter->isObject() && iter->moveToKey("id")) {

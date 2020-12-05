@@ -9,16 +9,18 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
         set.insert("user");
         set.insert("retweet_count");
         char* key = NULL;
-        while (set.empty() == false && (key = iter->moveToKey(set)) != NULL) {
+        while ((key = iter->moveToKey(set)) != NULL) {
             if (strcmp(key, "retweet_count") == 0) {
+                // value of "retweet_count"
                 char* value = iter->getValue();
                 output.append(value);
                 output.append("|");
                 ++output_size;
                 if (value) free(value);
-            } else {  /* value of "user" */
-                if (iter->down() == false) continue;
+            } else {
+                if (iter->down() == false) continue;  /* value of "user" */
                 if (iter->isObject() && iter->moveToKey("id")) {
+                    // value of "id"
                     char* value = iter->getValue();
                     output.append(value);
                     output.append("|");

@@ -5,16 +5,18 @@
 // $.products[*].categoryPath[1:3].id
 void query(BitmapIterator* iter, string& output, long& output_size) {
     if (iter->isObject() && iter->moveToKey("products")) {
-        if (iter->down() == false) return;
+        if (iter->down() == false) return;  /* value of "products" */
         while (iter->isArray() && iter->moveNext() == true) {
             if (iter->down() == false) continue;
             if (iter->isObject() && iter->moveToKey("categoryPath")) {
                 if (iter->down() == false) continue; /* value of "categoryPath" */
                 if (iter->isArray()) {
                     for (int idx = 1; idx <= 2; ++idx) {
+                        // 2nd and 3rd elements inside "categoryPath" array 
                         if (iter->moveToIndex(idx)) {
                             if (iter->down() == false) continue;
                             if (iter->isObject() && iter->moveToKey("id")) {
+                                // value of "id"
                                 char* value = iter->getValue();
                                 output.append(value);
                                 output.append("|");

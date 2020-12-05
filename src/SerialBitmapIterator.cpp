@@ -212,7 +212,7 @@ bool SerialBitmapIterator::moveToKey(char* key) {
 }
 
 char* SerialBitmapIterator::moveToKey(unordered_set<char*>& key_set) {
-    if (mCurLevel < 0 || mCurLevel > mSerialBitmap->mDepth || mCtxInfo[mCurLevel].type != OBJECT) return NULL;
+    if (key_set.empty() == true|| mCurLevel < 0 || mCurLevel > mSerialBitmap->mDepth || mCtxInfo[mCurLevel].type != OBJECT) return NULL;
     long cur_idx = mCtxInfo[mCurLevel].cur_idx + 1;
     long end_idx = mCtxInfo[mCurLevel].end_idx;
     while (cur_idx < end_idx) {

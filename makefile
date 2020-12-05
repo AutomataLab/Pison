@@ -3,8 +3,7 @@ EXEC1 = $(DIR)/example1
 EXEC2 = $(DIR)/example2
 EXEC3 = $(DIR)/example3
 EXEC4 = $(DIR)/example4
-EXEC5 = $(DIR)/pison_test
-TARGET = $(EXEC1) ${EXEC2} ${EXEC3} ${EXEC4} $(EXEC5)
+TARGET = $(EXEC1) ${EXEC2} ${EXEC3} ${EXEC4}
 all: $(TARGET)
 
 CC = g++-7
@@ -30,11 +29,6 @@ SOURCE4 = src/*.cpp example/example4.cpp
 $(EXEC4): $(SOURCE4)
 	mkdir -p $(DIR)
 	$(CC) $(CC_FLAGS) -o $(EXEC4) $(SOURCE4) $(POST_FLAGS)
-
-SOURCE5 = src/*.cpp test/parallel_query.cpp test/test_queries.cpp test/pison_test.cpp
-$(EXEC5): $(SOURCE5)
-	mkdir -p $(DIR)
-	$(CC) $(CC_FLAGS) -o $(EXEC5) $(SOURCE5) $(POST_FLAGS)
 
 clean:
 	-$(RM) $(TARGET)
