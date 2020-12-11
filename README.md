@@ -39,7 +39,7 @@ We compared the performance of Pison and simdjson for processing a sequence of s
 
 The following figure reports the exeuction time (including both index construction and query evaluations) for bulky JSON record processing using Pison and simdjson. Overall, the performance of serial Pison is comparable with simdjson. For index construction, Pison outperforms simdjson. But Pison performs worse than simdjson for query evaluation, since the structure of bitmap indices requires both parsing and querying for certain tokens. On top of that, simdjson can not run in parallel, while Pison with 8 threads achieves 5.4X speedup over simdjson on average. 
 
-<img src="doc/compare_large.pdf" width="90%">
+<img src="doc/compare_large.png" width="90%">
 
 
 ## APIs
