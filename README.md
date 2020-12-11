@@ -41,6 +41,10 @@ The following figure reports the exeuction time (including both index constructi
 
 <img src="doc/compare_large.png" width="90%">
 
+As in the scenario of small records, parallelism can be easily achieved at the task level, so we only report the serial performance of Pison for fairness. The following figure shows the performance results of both methods, which are consistent with those in large record processing. 
+
+<img src="doc/compare_small.png" width="90%">
+
 
 ## APIs
 ### Records Loading (Class: RecordLoader)
