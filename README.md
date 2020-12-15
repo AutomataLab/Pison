@@ -1,5 +1,5 @@
 # Pison
-Pison builds structural index (in bitmaps) for JSON records to accelerate JSON analytics. 
+Pison builds structural index (bitmaps for colon and comma of different levels) for JSON records to accelerate JSON analytics. 
 It leverages both coarse-grained (multicore) parallelism and fine-grained (bitwise and SIMD) parallelism to make index construction efficient.
 For more details about Pison, please refer to our paper [1].
 
