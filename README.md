@@ -36,8 +36,8 @@ Assume executable example file is `example1`.
 
 ## APIs
 ### Records Loading (Class: RecordLoader)
-- `static Records* loadSingleRecord(char* file_path)`: loads the whole input file as one single record (allow newlines in strings). 
-- `static Records* loadRecords(char* file_path)`: loads multiple records from the input file (all newlines are treated as delimiters; no newlines are allowed in strings). 
+- `static Records* loadSingleRecord(char* file_path)`: loads the whole input file as one single record (allow newlines in strings and other legal places). 
+- `static Records* loadRecords(char* file_path)`: loads multiple records from the input file (all newlines are treated as delimiters; no newlines are allowed within a record). 
 ### Generating Leveled Bitmap Indices (Class: BitmapConstructor)
 - `static Bitmap* construct(Records* records, int rec_id, int thread_num = 1, int level = MAX_LEVEL, bool support_array = true)`: constructs leveled bitmaps for one specified record (indicated by `rec_id`) in parallel; bitmap indices can be created based on the maximum level of given queries (indicated by `level`). 
 - `static BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
