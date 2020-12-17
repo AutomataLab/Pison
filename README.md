@@ -39,11 +39,11 @@ We compared Pison with [simdjson](https://github.com/simdjson/simdjson) for proc
 
 The following figure reports the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while Pison with 8 threads achieves 5.4X speedup over simdjson on average. 
 
-<img src="doc/compare_large.png" width="70%">
+<img src="doc/compare_large_server1.png" width="70%" title ="large record">
 
 In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison.
 
-<img src="doc/compare_small.png" width="70%">
+<img src="doc/compare_small_server1.png" width="70%" title = "small record">
 
 More detailed evaluation can be found in our VLDB'21 paper (see reference above).
 
