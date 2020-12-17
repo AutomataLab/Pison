@@ -35,13 +35,13 @@ Assume executable example file is `example1`.
   ```
 
 ## Performance Results
-We compared Pison with [simdjson](https://github.com/simdjson/simdjson) for processing (i) a sequence of small JSON records and (ii) individual bulky JSON records. These datasets include Best Buy (BB) product dataset, tweets from Twitter (TT) developer API, Google Maps Directions (GMD) dataset, National Statistics Post-code Lookup (NSPL) dataset for United Kingdom, Walmart (WM) product dataset, and Wikipedia (WP) entity dataset. Each dataset forms a single large JSON record, and the size is approximately 1GB. To create scenarios of small records processing, we manually extracted the dominating array (a large array consists with sub-records) from each dataset, broke it into smaller records, and inserted a new line after each small record, which is a common way to organize small JSON records. For each dataset, we created a single JSONPath query. All experiments were conducted on a 16-core machine equipped with two Intel 2.1GHz Xeon E5-2620 v4 CPUs and 64GB RAM. 
+We compared Pison with [simdjson](https://github.com/simdjson/simdjson) for processing (i) a sequence of small JSON records and (ii) individual bulky JSON records. These datasets include Best Buy (BB) product dataset, tweets from Twitter (TT) developer API, Google Maps Directions (GMD) dataset, National Statistics Post-code Lookup (NSPL) dataset for United Kingdom, Walmart (WM) product dataset, and Wikipedia (WP) entity dataset. Each dataset is a single large JSON record of approximately 1GB. Small records are extracted from the dominating array (a large array consists with sub-records) in each dataset, and are delimited by newlines. For each dataset, we created a single JSONPath query. All experiments were conducted on a 16-core machine equipped with two Intel 2.1GHz Xeon E5-2620 v4 CPUs and 64GB RAM. 
 
-The following figure reports the exeuction time (including both index construction and query evaluations) for bulky JSON record processing using Pison and simdjson. Overall, the performance of serial Pison is comparable with simdjson. For index construction, Pison outperforms simdjson. But simdjson performs better for query evaluation, since the structure of bitmap indices generated from Pison requires both parsing and querying for certain tokens. On top of that, simdjson can not run in parallel, while Pison with 8 threads achieves 5.4X speedup over simdjson on average. 
+The following figure reports the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while Pison with 8 threads achieves 5.4X speedup over simdjson on average. 
 
 <img src="doc/compare_large.png" width="90%">
 
-As in the scenario of small records, parallelism can be easily achieved at the task level, so we only report the serial performance of Pison for fairness. The following figure shows the performance results of both methods, which are consistent with those in large record processing. 
+As in the scenario of small records, parallelism can be easily achieved at the task level, so we only report the serial performance of Pison for fairness.
 
 <img src="doc/compare_small.png" width="90%">
 
