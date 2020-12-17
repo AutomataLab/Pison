@@ -41,7 +41,7 @@ The following figure reports the exeuction time (including both the index constr
 
 <img src="doc/compare_large.png" width="70%">
 
-As in the scenario of small records, parallelism can be easily achieved at the task level, so we only report the serial performance of Pison for fairness.
+In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison.
 
 <img src="doc/compare_small.png" width="70%">
 
