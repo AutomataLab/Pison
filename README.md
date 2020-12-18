@@ -51,7 +51,7 @@ All experiments were conducted on two Xeon servers:
 - **[Server 1]**: a 16-core machine equipped with two Intel 2.1GHz Xeon E5-2620 v4 CPUs and 64GB RAM. 
 - **[Server 2]**: a 4-core machine equipped with two Intel 3.5GHz Xeon E3-1240 v5 CPUs and 16GB RAM. 
 
-The following figure reports the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while Pison with 8 threads achieves 5.4X speedup over simdjson (Server 1), and achieves 3.1X speedup over simdjson on average (Server 2). 
+The following two figures report the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while Pison with 8 threads achieves 5.4X and 3.1X speedups (on average) over simdjson on Server 1 and Server 2, respectively. 
 
 <figcaption style="text-align:center"><b>Fig.1 - Execution Time of Single Large Record (Server 1).</b></figcaption>
 <br/>
