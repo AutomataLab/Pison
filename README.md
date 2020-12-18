@@ -43,7 +43,10 @@ The following figure reports the exeuction time (including both the index constr
 
 In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison.
 
-<img src="doc/compare_small_server1.png" width="70%" title = "small record">
+<figure align="center">
+<img src="doc/compare_small_server1.png" width="70%">
+<figcaption text_align="center">Fig.3 - Execution Time of Sequence of Small Records (Server 1).</figcaption>
+</figure>
 
 More detailed evaluation can be found in our VLDB'21 paper (see reference above).
 
