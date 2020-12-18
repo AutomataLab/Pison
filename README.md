@@ -64,11 +64,11 @@ The following figure reports the exeuction time (including both the index constr
 
 In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison.
 
-<figcaption style="text-align:center"><b>Fig.3 - Execution Time of Sequence of Small Records (Xeon 1).</b></figcaption>
+<figcaption style="text-align:center"><b>Fig.3 - Execution Time of Sequence of Small Records (Server 1).</b></figcaption>
 <br/>
 <img src="doc/compare_small_server1.png" width="70%"></img>
 
-<figcaption style="text-align:center"><b>Fig.4 - Execution Time of Sequence of Small Records (Xeon 2).</b></figcaption>
+<figcaption style="text-align:center"><b>Fig.4 - Execution Time of Sequence of Small Records (Server 2).</b></figcaption>
 <br/>
 <img src="doc/compare_small_server2.png" width="70%"></img>
 
