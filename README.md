@@ -1,5 +1,5 @@
 # Pison
-Pison builds structural index (in bitmaps) for JSON records to accelerate JSON analytics. 
+Pison builds structural index (bitmaps for colon and comma of different levels) for JSON records to accelerate JSON analytics. 
 It leverages both coarse-grained (multicore) parallelism and fine-grained (bitwise and SIMD) parallelism to make index construction efficient.
 For more details about Pison, please refer to our paper [1].
 
@@ -51,29 +51,33 @@ All experiments were conducted on two Xeon servers:
 - **[Server 1]**: a 16-core machine equipped with two Intel 2.1GHz Xeon E5-2620 v4 CPUs and 64GB RAM. 
 - **[Server 2]**: a 4-core machine equipped with two Intel 3.5GHz Xeon E3-1240 v5 CPUs and 16GB RAM. 
 
-The following figure reports the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while Pison with 8 threads achieves 5.4X speedup over simdjson on average (Server 1), Pison with 4 threads achieves 3.1X speedup over simdjson on average (Server 2). 
+The following figure reports the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while Pison with 8 threads achieves 5.4X speedup over simdjson (Server 1), and achieves 3.1X speedup over simdjson on average (Server 2). 
 
 <figcaption style="text-align:center"><b>Fig.1 - Execution Time of Single Large Record (Server 1).</b></figcaption>
+<br/>
 <img src="doc/compare_large_server1.png" width="70%"></img>
 
 <figcaption style="text-align:center"><b>Fig.2 - Execution Time of Single Large Record (Server 2).</b></figcaption>
+<br/>
 <img src="doc/compare_large_server2.png" width="70%"></img>
 
 
 In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison.
 
 <figcaption style="text-align:center"><b>Fig.3 - Execution Time of Sequence of Small Records (Xeon 1).</b></figcaption>
+<br/>
 <img src="doc/compare_small_server1.png" width="70%"></img>
 
 <figcaption style="text-align:center"><b>Fig.4 - Execution Time of Sequence of Small Records (Xeon 2).</b></figcaption>
+<br/>
 <img src="doc/compare_small_server2.png" width="70%"></img>
 
 More detailed evaluation can be found in our VLDB'21 paper (see reference above).
 
 ## APIs
 ### Records Loading (Class: RecordLoader)
-- `static Records* loadSingleRecord(char* file_path)`: loads the input file as one single record (newline delimeter is considered as a part of record). 
-- `static Records* loadRecords(char* file_path)`: loads multiple records from the input file. 
+- `static Records* loadSingleRecord(char* file_path)`: loads the whole input file as one single record (allow newlines in strings and other legal places). 
+- `static Records* loadRecords(char* file_path)`: loads multiple records from the input file (all newlines are treated as delimiters; no newlines are allowed within a record). 
 ### Generating Leveled Bitmap Indices (Class: BitmapConstructor)
 - `static Bitmap* construct(Records* records, int rec_id, int thread_num = 1, int level = MAX_LEVEL, bool support_array = true)`: constructs leveled bitmaps for one specified record (indicated by `rec_id`) in parallel; bitmap indices can be created based on the maximum level of given queries (indicated by `level`). 
 - `static BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
