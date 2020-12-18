@@ -53,22 +53,22 @@ All experiments were conducted on two Xeon servers:
 
 The following two figures report the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while parallel Pison achieves 5.4X and 3.1X speedups (on average) over simdjson on Server 1 (with 8 threads) and Server 2 (with 4 threads), respectively. 
 
-<figcaption style="text-align:center"><b>Fig.1 - Execution Time of Single Large Record (Server 1).</b></figcaption>
+<figcaption style="text-align:center"><b>Fig.1 - Execution Time of Processing A Single Large Record (Server 1).</b></figcaption>
 <br/>
 <img src="doc/compare_large_server1.png" width="70%"></img>
 
-<figcaption style="text-align:center"><b>Fig.2 - Execution Time of Single Large Record (Server 2).</b></figcaption>
+<figcaption style="text-align:center"><b>Fig.2 - Execution Time of Processing A Single Large Record (Server 2).</b></figcaption>
 <br/>
 <img src="doc/compare_large_server2.png" width="70%"></img>
 
 
 In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison.
 
-<figcaption style="text-align:center"><b>Fig.3 - Execution Time of Sequence of Small Records (Server 1).</b></figcaption>
+<figcaption style="text-align:center"><b>Fig.3 - Execution Time of Processing A Sequence of Small Records (Server 1).</b></figcaption>
 <br/>
 <img src="doc/compare_small_server1.png" width="70%"></img>
 
-<figcaption style="text-align:center"><b>Fig.4 - Execution Time of Sequence of Small Records (Server 2).</b></figcaption>
+<figcaption style="text-align:center"><b>Fig.4 - Execution Time of Processing A Sequence of Small Records (Server 2).</b></figcaption>
 <br/>
 <img src="doc/compare_small_server2.png" width="70%"></img>
 
