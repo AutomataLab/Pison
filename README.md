@@ -35,7 +35,16 @@ Assume executable example file is `example1`.
   ```
 
 ## Performance Results
-We compared Pison with [simdjson](https://github.com/simdjson/simdjson) for processing (i) a single bulky JSON record and (ii) a sequence of small JSON records. These datasets include Best Buy (BB) product dataset, tweets (TT) from Twitter developer API, Google Maps Directions (GMD) dataset, National Statistics Post-code Lookup (NSPL) dataset for United Kingdom, Walmart (WM) product dataset, and Wikipedia (WP) entity dataset. Each dataset is a single large JSON record of approximately 1GB. Small records are extracted from the dominating array (a large array consists with sub-records) in each dataset, and are delimited by newlines. For each dataset, we created a single JSONPath query, like the following table. 
+We compared Pison with [simdjson](https://github.com/simdjson/simdjson) for processing (i) a single bulky JSON record and (ii) a sequence of small JSON records. These datasets include Best Buy (BB) product dataset, tweets (TT) from Twitter developer API, Google Maps Directions (GMD) dataset, National Statistics Post-code Lookup (NSPL) dataset for United Kingdom, Walmart (WM) product dataset, and Wikipedia (WP) entity dataset. Each dataset is a single large JSON record of approximately 1GB. Small records are extracted from the dominating array (a large array consists with sub-records) in each dataset, and are delimited by newlines. For each dataset, we created a single JSONPath query, like the following table (for bulky records made of small records, we add a prefix `[*]`):
+
+| ID                  |   Query                     |    Number of Matches   |
+| :-----------------: |:---------------------------| :---------------------:|
+| TT                  |   `{$.user.lang, $.lang}`     |    300,270            |
+| BB                  |   `{$.categoryPath[1:3].id}`  |    459,332            |
+| GMD                 |   `{$.routes[*].legs[*].steps[*].distance.text}`  |    1,716,752            |
+| NSPL                       | `{$.meta.view.columns[*].name}`     |    44     |
+| WM                    | `{$.bestMarketplacePrice.price, $.name}`      |   288,391  |
+| WP                       | `{$.claims.P150[*].mainsnak.property}`          |  15,603  |
 
 
 All experiments were conducted on two Xeon servers: 
