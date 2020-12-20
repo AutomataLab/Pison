@@ -35,7 +35,7 @@ Assume executable example file is `example1`.
   ```
 
 ## Performance Results
-We compared Pison with [simdjson](https://github.com/simdjson/simdjson) for processing (i) a single bulky JSON record and (ii) a sequence of small JSON records. These datasets include Best Buy (BB) product dataset, tweets (TT) from Twitter developer API, Google Maps Directions (GMD) dataset, National Statistics Post-code Lookup (NSPL) dataset for United Kingdom, Walmart (WM) product dataset, and Wikipedia (WP) entity dataset. Each dataset is a single large JSON record of approximately 1GB. Small records are extracted from the dominating array (a large array consists with sub-records) in each dataset, and are delimited by newlines. For each dataset, we created a JSONPath query, listed in the following table (for bulky records made of small records, an additional prefix `[*]` is added):
+We compared Pison with [RapidJSON](https://github.com/Tencent/rapidjson) and [simdjson](https://github.com/simdjson/simdjson) for processing (i) a single bulky JSON record and (ii) a sequence of small JSON records. These datasets include Best Buy (BB) product dataset, tweets (TT) from Twitter developer API, Google Maps Directions (GMD) dataset, National Statistics Post-code Lookup (NSPL) dataset for United Kingdom, Walmart (WM) product dataset, and Wikipedia (WP) entity dataset. Each dataset is a single large JSON record of approximately 1GB. Small records are extracted from the dominating array (a large array consists with sub-records) in each dataset, and are delimited by newlines. For each dataset, we created a JSONPath query, listed in the following table (for bulky records made of small records, an additional prefix `[*]` is added):
 
 | ID                  |   JSONPath Query                     |    Number of Matches   |
 | :-----------------: |:---------------------------| :---------------------:|
@@ -51,7 +51,7 @@ All experiments were conducted on two Xeon servers:
 - **[Server 1]**: a 16-core machine equipped with two Intel 2.1GHz Xeon E5-2620 v4 CPUs and 64GB RAM. 
 - **[Server 2]**: a 4-core machine equipped with an Intel 3.5GHz Xeon E3-1240 v5 CPUs and 16GB RAM. 
 
-The following two figures report the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, the performance of serial Pison is comparable to simdjson, while parallel Pison achieves 5.4X and 3.1X speedups (on average) over simdjson on Server 1 (with 8 threads) and Server 2 (with 4 threads), respectively. 
+The following two figures report the exeuction time (including both the index construction and the query evaluation) for bulky JSON record processing. Overall, both Pison and simdjson outperform RapidJSON, thanks to the use of SIMD and bitwise parallelism. The performance of serial Pison is comparable to simdjson, while parallel Pison achieves 5.4X and 3.1X speedups (on average) over simdjson on Server 1 (with 8 threads) and Server 2 (with 4 threads), respectively. 
 
 <figcaption style="text-align:center"><b>Fig.1 - Execution Time of Processing A Single Large Record (Server 1).</b></figcaption>
 <br/>
