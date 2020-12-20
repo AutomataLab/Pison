@@ -62,7 +62,7 @@ The following two figures report the exeuction time (including both the index co
 <img src="doc/compare_large_server2.png" width="70%"></img>
 
 
-In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison.
+In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison. Performance results are consistent with those in large record processing.
 
 <figcaption style="text-align:center"><b>Fig.3 - Execution Time of Processing A Sequence of Small Records (Server 1).</b></figcaption>
 <br/>
