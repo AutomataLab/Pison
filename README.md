@@ -62,7 +62,7 @@ The following two figures report the exeuction time (including both the index co
 <img src="doc/compare_large_server2.png" width="70%"></img>
 
 
-In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison. Performance results are consistent with those in large record processing.
+In the scenario of small records processing, parallelism can be easily achieved at the task level (i.e., processing different records in parallel), so we only report the serial performance of Pison. Overall, performance results are consistent with those in large record processing.
 
 <figcaption style="text-align:center"><b>Fig.3 - Execution Time of Processing A Sequence of Small Records (Server 1).</b></figcaption>
 <br/>
@@ -77,7 +77,7 @@ More detailed evaluation can be found in our VLDB'21 paper (see reference above)
 ## APIs
 ### Records Loading (Class: RecordLoader)
 - `static Records* loadSingleRecord(char* file_path)`: loads the whole input file as one single record (allow newlines in strings and other legal places). 
-- `static Records* loadRecords(char* file_path)`: loads multiple records from the input file (all newlines are treated as delimiters; no newlines (except for `\n` and `\r` within JSON string) are allowed within a record). 
+- `static Records* loadRecords(char* file_path)`: loads multiple records from the input file (all newlines are treated as delimiters; no newlines (except for `\n` and `\r` in JSON strings) are allowed within a record). 
 ### Generating Leveled Bitmap Indices (Class: BitmapConstructor)
 - `static Bitmap* construct(Records* records, int rec_id, int thread_num = 1, int level = MAX_LEVEL, bool support_array = true)`: constructs leveled bitmaps for one specified record (indicated by `rec_id`) in parallel; bitmap indices can be created based on the maximum level of given queries (indicated by `level`). 
 - `static BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
