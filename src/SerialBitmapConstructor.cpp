@@ -3,14 +3,14 @@
 #include <sys/time.h>
 #include <sys/file.h>
 
-SerialBitmap* SerialBitmapConstructor::construct(Records* records, int rec_id, int depth, bool support_array) {
-    char* record = NULL;
+SerialBitmap* SerialBitmapConstructor::construct(Record* record, int depth) {
+    char* record_text = NULL;
     long length = 0;
-    if (records->rec_start_pos != NULL) record = records->text + records->rec_start_pos[rec_id];
-    else record = records->text;
-    if (records->rec_length != NULL) length = records->rec_length[rec_id];
-    else length = strlen(records->text);
-    SerialBitmap* bitmap = new SerialBitmap(record, depth, support_array);
+    if (record->rec_start_pos > 0) record_text = record->text + record->rec_start_pos;
+    else record_text = record->text;
+    if (record->rec_length > 0) length = record->rec_length;
+    else length = strlen(record->text);
+    SerialBitmap* bitmap = new SerialBitmap(record_text, depth);
     bitmap->setRecordLength(length);
     bitmap->indexConstruction();
     return bitmap;

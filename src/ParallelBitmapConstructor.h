@@ -20,7 +20,7 @@ class ParallelBitmapConstructor {
     static pthread_t mThreads[MAX_THREAD]; 
     static int mThreadArgs[MAX_THREAD];
   public:
-    static ParallelBitmap* construct(Records* records, int rec_id, int thread_num, int depth = MAX_LEVEL);
+    static ParallelBitmap* construct(Record* record, int thread_num, int depth = MAX_LEVEL);
   private:
     // builds bitmap index in non-speculative mode.
     static void* nonSpecIndexConstruction(void* arg) {

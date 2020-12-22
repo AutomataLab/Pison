@@ -48,8 +48,6 @@ ParallelBitmap::ParallelBitmap(char* record, long rec_len, int thread_num, int d
     }
     int cur_len = 0;
     mParallelMode = NONSPECULATIVE;
-    int num_trial = 0;
-    int num_tkn_err = 0;
     for (int i = 0; i < thread_num; ++i) {
         mBitmaps[i] = new LocalBitmap(start_chunk, depth);
         if (i < thread_num - 1) {
@@ -69,17 +67,7 @@ ParallelBitmap::ParallelBitmap(char* record, long rec_len, int thread_num, int d
         if (mBitmaps[i]->contextInference() == UNKNOWN) {
             mParallelMode = SPECULATIVE;
         }
-        // used for testing the performance cost of misspeculation
-        /*mParallelMode = SPECULATIVE;
-        if (i > 0) { 
-            num_trial += mBitmaps[i]->mNumTrial;
-            num_tkn_err += mBitmaps[i]->mNumTknErr;
-            if (i == 2 || i == 3) {
-                mBitmaps[i]->mStartInStrBitmap = ~mBitmaps[i]->mStartInStrBitmap;
-            }
-        }*/
     }
-    // cout<<"num of trials "<<num_trial<<" number of token errors "<<num_tkn_err<<endl;
 }
 
 ParallelBitmap::~ParallelBitmap() {

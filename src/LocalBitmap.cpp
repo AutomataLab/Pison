@@ -51,8 +51,8 @@ LocalBitmap::LocalBitmap(char* record, int depth) {
     this->mMaxPositiveLevel = 0;
     this->mMinNegativeLevel = -1;
 
-    mNumTknErr = 0;
-    mNumTrial = 0;
+    this->mNumTknErr = 0;
+    this->mNumTrial = 0;
 }
 
 void LocalBitmap::freeMemory()

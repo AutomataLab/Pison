@@ -1,12 +1,12 @@
 #include "BitmapConstructor.h"
 
-Bitmap* BitmapConstructor::construct(Records* records, int rec_id, int thread_num, int level, bool support_array) {
+Bitmap* BitmapConstructor::construct(Record* record, int thread_num, int level) {
     Bitmap* bm = NULL;
     if (thread_num == 1) {
-        bm = SerialBitmapConstructor::construct(records, rec_id, level, support_array);
+        bm = SerialBitmapConstructor::construct(record, level);
         bm->type = SEQUENTIAL;
     } else {
-        bm = ParallelBitmapConstructor::construct(records, rec_id, thread_num, level);
+        bm = ParallelBitmapConstructor::construct(record, thread_num, level);
         bm->type = PARALLEL;
     }
     return bm;

@@ -38,12 +38,10 @@ class SerialBitmap : public Bitmap {
     unsigned long *mLevCommaBitmap[MAX_LEVEL + 1];
     // the deepest level of leveled bitmap indexes
     int mDepth;
-    // whether to create leveled comma bitmaps
-    bool mArraySupported;
     
   public:
     SerialBitmap();
-    SerialBitmap(char* record, int depth, bool array_supported = true);
+    SerialBitmap(char* record, int depth);
     ~SerialBitmap();
     void indexConstruction();
     void setRecordLength(long length);

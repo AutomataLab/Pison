@@ -13,7 +13,8 @@ using namespace std;
 
 class BitmapConstructor {
   public:
-    static Bitmap* construct(Records* records, int rec_id, int thread_num = 1, int level = MAX_LEVEL, bool support_array = true);
+    // construct leveled bitmaps for a JSON record
+    static Bitmap* construct(Record* record, int thread_num = 1, int level = MAX_LEVEL);
     // get bitmap iterator for given bitmap index
     static BitmapIterator* getIterator(Bitmap* bi);
 };

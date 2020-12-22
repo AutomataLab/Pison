@@ -24,15 +24,14 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
 
 int main() {
     char* file_path = "../dataset/twitter_sample_large_record.json";
-    Records* recs = RecordLoader::loadSingleRecord(file_path);
-    if (recs == NULL) {
+    Record* rec = RecordLoader::loadSingleRecord(file_path);
+    if (rec == NULL) {
         cout<<"record loading fails."<<endl;
         return -1;
     }
-    int rec_id = 0;
     int thread_num = 16;
     // structural index construction, create bitmaps at all levels
-    Bitmap* bm = BitmapConstructor::construct(recs, rec_id, thread_num);
+    Bitmap* bm = BitmapConstructor::construct(rec, thread_num);
     BitmapIterator* iter = BitmapConstructor::getIterator(bm);
     // query execution
     string output;
@@ -41,6 +40,6 @@ int main() {
     cout<<"the total number of output matches is "<<output_size<<endl;
     delete iter;
     delete bm;
-    delete recs;
+    delete rec;
     return 0;
 }

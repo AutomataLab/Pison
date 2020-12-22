@@ -13,12 +13,13 @@
 #include <sched.h>
 #include <iostream>
 #include <string>
+#include <vector>
 #include "Records.h"
 using namespace std;
 
 class RecordLoader{
   public:
-    static Records* loadSingleRecord(char* file_path);
-    static Records* loadRecords(char* file_path);
+    static Record* loadSingleRecord(char* file_path);
+    static RecordSet* loadRecords(char* file_path);
 };
 #endif

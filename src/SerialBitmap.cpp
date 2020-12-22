@@ -25,7 +25,7 @@ SerialBitmap::SerialBitmap() {
 
 }
 
-SerialBitmap::SerialBitmap(char* record, int depth, bool array_supported) {
+SerialBitmap::SerialBitmap(char* record, int depth) {
     this->mRecord = record;
     this->mDepth = depth;
     this->mQuoteBitmap = NULL;
@@ -33,7 +33,6 @@ SerialBitmap::SerialBitmap(char* record, int depth, bool array_supported) {
         this->mLevColonBitmap[i] = NULL;
         this->mLevCommaBitmap[i] = NULL;
     }
-    this->mArraySupported = array_supported;
 }
 
 void SerialBitmap::freeMemory()
@@ -170,13 +169,8 @@ void SerialBitmap::indexConstruction() {
             rbracketbit = rbracketbit & tmp;
 	
             // step 5: generate leveled bitmaps
-            if (mArraySupported) {
-                lb_mask = lbracebit | lbracketbit;
-                rb_mask = rbracebit | rbracketbit;
-            } else {
-                lb_mask = lbracebit;
-                rb_mask = rbracebit;
-            }
+            lb_mask = lbracebit | lbracketbit;
+            rb_mask = rbracebit | rbracketbit;
             cb_mask = lb_mask | rb_mask;
             lb_bit = lb_mask & (-lb_mask);
             rb_bit = rb_mask & (-rb_mask);
