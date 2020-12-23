@@ -42,19 +42,25 @@ int main() {
     }
     string output;
     long output_size = 0;
-    // visit each record sequentially
-    int cur_idx = 0;
-    int end_idx = record_set->size();
-    int thread_num = 1;
+    
+    // set the number of threads
+    int thread_num = 1;  
+    
+    /* set the maximal level of bitmaps to create, either based on query or JSON records 
+     * (e.g., a query like $.a.b[4] has two levels, but the record may be of more than 
+     * two levels)
+     */
     int max_level = 1;
-    while (cur_idx < end_idx) {
-        Bitmap* bm = BitmapConstructor::construct((*record_set)[cur_idx], thread_num, max_level);
-        BitmapIterator* iter = BitmapConstructor::getIterator(bm);
-        query(iter, output, output_size);
-        delete iter;
-        delete bm;
-        ++cur_idx;
+    
+    // visit each record sequentially
+    int num_recs = record_set->size();
+    Bitmap* bm = null;   // allocate 
+    for (int i = 0; i < num_recs; i++) {
+        bm = BitmapConstructor::construct((*record_set)[i], thread_num, max_level);
+        output = query(BitmapConstructor::getIterator(bm));
     }
-    cout<<"the total number of output matches is "<<output_size<<endl;
+    delete bm;
+    
+    cout<<"matches are: "<<output<<endl;
     return 0;
 }
