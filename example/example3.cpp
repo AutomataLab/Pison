@@ -40,10 +40,9 @@ int main() {
         cout<<"record loading fails."<<endl;
         return -1;
     }
-    string output;
-    long output_size = 0;
+    string output = "";
     
-    // set the number of threads
+    // set the number of threads for parallel bitmap construction
     int thread_num = 1;  
     
     /* set the maximal level of bitmaps to create, either based on query or JSON records 
@@ -52,7 +51,9 @@ int main() {
      */
     int max_level = 1;
     
-    // visit each record sequentially
+    /* process the records one by one: for each one, first build bitmap, then perform 
+     * the query with a bitmap iterator
+     */
     int num_recs = record_set->size();
     Bitmap* bm = null;   // allocate 
     for (int i = 0; i < num_recs; i++) {
