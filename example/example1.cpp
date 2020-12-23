@@ -34,8 +34,8 @@ int main() {
     int thread_num = 16;
 
     /* set the maximal level of bitmaps (starting from 0) to create, either based on 
-     * query or JSON records (e.g., a query like $.a.b[4] has two levels, but the record
-     * may be of more than two levels)
+     * query or JSON records (e.g., a query like $.a.b[4] has three levels, but the record
+     * may be of more than three levels)
      */
     int max_level = 2;
 
