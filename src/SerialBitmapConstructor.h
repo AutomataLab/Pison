@@ -6,6 +6,6 @@
 
 class SerialBitmapConstructor {
   public:
-    static SerialBitmap* construct(Record* record, int depth = MAX_LEVEL);
+    static SerialBitmap* construct(Record* record, int level_num = MAX_LEVEL);
 };
 #endif

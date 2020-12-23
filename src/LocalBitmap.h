@@ -29,7 +29,7 @@ class LocalBitmap : public Bitmap {
     long mNumTmpWords;
     // each word has 64 bytes
     long mNumWords;
-    // the deepest level of leveled bitmap indexes
+    // the deepest level of leveled bitmap indexes (starting from 0)
     int mDepth;
     // structural character bitmaps
     unsigned long *mEscapeBitmap, *mStrBitmap, *mColonBitmap, *mCommaBitmap, *mLbracketBitmap, *mRbracketBitmap, *mLbraceBitmap, *mRbraceBitmap;
@@ -42,11 +42,11 @@ class LocalBitmap : public Bitmap {
 
     // following variables are used for merging phase (after Step 5, merge leveled bitmap)
     // each thread starts with level 0, following two arrays save bitmaps for levels higher than 0 (temporary result)
-    unsigned long *mLevColonBitmap[MAX_LEVEL + 1];
-    unsigned long *mLevCommaBitmap[MAX_LEVEL + 1];
+    unsigned long *mLevColonBitmap[MAX_LEVEL];
+    unsigned long *mLevCommaBitmap[MAX_LEVEL];
     // each thread starts with level 0, following two arrays save bitmaps for levels less than 0 (temporary result)
-    unsigned long *mNegLevColonBitmap[MAX_LEVEL + 1];
-    unsigned long *mNegLevCommaBitmap[MAX_LEVEL + 1];
+    unsigned long *mNegLevColonBitmap[MAX_LEVEL];
+    unsigned long *mNegLevCommaBitmap[MAX_LEVEL];
     // each thread starts with level 0
     // mMaxPositiveLevel saves the maximum positive level in current thread
     int mMaxPositiveLevel;
@@ -57,8 +57,8 @@ class LocalBitmap : public Bitmap {
 
     // following variables are used by ParallelBitmapIterator
     // temporary leveled colon bitmap is mapped to the correct level, which happens during the merging phase
-    unsigned long *mFinalLevColonBitmap[MAX_LEVEL + 1];
-    unsigned long *mFinalLevCommaBitmap[MAX_LEVEL + 1];
+    unsigned long *mFinalLevColonBitmap[MAX_LEVEL];
+    unsigned long *mFinalLevCommaBitmap[MAX_LEVEL];
     // structural quote bitmap, used for getting the key field when iterating bitmaps
     unsigned long *mQuoteBitmap; 
     // word ids for the first and last words, often used when iterating leveled bitmap to get some information like colon, comma and key field positions
@@ -67,7 +67,7 @@ class LocalBitmap : public Bitmap {
   
   public:
     LocalBitmap();	
-    LocalBitmap(char* record, int depth);
+    LocalBitmap(char* record, int level_num);
     ~LocalBitmap();
     // context inference for parallel index construction (step 3).
     // if it context information couldn't be inferred, return SPECULATIVE; else return NOSPECULATIVE

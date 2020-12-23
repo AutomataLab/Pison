@@ -23,10 +23,10 @@ LocalBitmap::LocalBitmap() {
 
 }
 
-LocalBitmap::LocalBitmap(char* record, int depth) {
+LocalBitmap::LocalBitmap(char* record, int level_num) {
     this->mThreadId = 0;
     this->mRecord = record;
-    this->mDepth = depth;
+    this->mDepth = level_num - 1;
     this->mStartWordId = 0;
     this->mEndWordId = 0;
     this->mQuoteBitmap = NULL;
@@ -38,7 +38,7 @@ LocalBitmap::LocalBitmap(char* record, int depth) {
     this->mRbraceBitmap = NULL;
     this->mLbracketBitmap = NULL;
     this->mRbracketBitmap = NULL;
-    for (int i = 0; i <= MAX_LEVEL; ++i) {
+    for (int i = 0; i < MAX_LEVEL; ++i) {
         this->mLevColonBitmap[i] = NULL;
         this->mLevCommaBitmap[i] = NULL;
         this->mNegLevColonBitmap[i] = NULL;
@@ -57,7 +57,7 @@ LocalBitmap::LocalBitmap(char* record, int depth) {
 
 void LocalBitmap::freeMemory()
 {
-    for(int m = 0; m <= MAX_LEVEL; ++m){
+    for(int m = 0; m < MAX_LEVEL; ++m){
         if (mLevColonBitmap[m]) {
             free(mLevColonBitmap[m]);
             mLevColonBitmap[m] = NULL;
@@ -395,7 +395,7 @@ void LocalBitmap::nonSpecIndexConstruction() {
 	    }
         }
     }
-    if (mDepth == MAX_LEVEL) mDepth = mMaxPositiveLevel;
+    if (mDepth == MAX_LEVEL - 1) mDepth = mMaxPositiveLevel;
     mEndLevel = cur_level;
 }
 
@@ -684,6 +684,6 @@ void LocalBitmap::buildLeveledBitmap() {
             }
         }
     }
-    if (mDepth == MAX_LEVEL) mDepth = mMaxPositiveLevel; 
+    if (mDepth == MAX_LEVEL - 1) mDepth = mMaxPositiveLevel; 
     mEndLevel = cur_level;
 }

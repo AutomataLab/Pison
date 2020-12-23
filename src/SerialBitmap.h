@@ -14,12 +14,6 @@
 #include "Bitmap.h"
 using namespace std;
 
-#define MAX_STACK_DEPTH 100
-typedef struct StackElement{
-    unsigned long position;
-    unsigned long bits;
-}StackElement;
-
 class SerialBitmap : public Bitmap {
     friend class SerialBitmapIterator;
   private:
@@ -33,15 +27,15 @@ class SerialBitmap : public Bitmap {
     // structural quote bitmap, used for key field parsing
     unsigned long *mQuoteBitmap;
     // leveled colon bitmap
-    unsigned long *mLevColonBitmap[MAX_LEVEL + 1];
+    unsigned long *mLevColonBitmap[MAX_LEVEL];
     // leveled comma bitmap
-    unsigned long *mLevCommaBitmap[MAX_LEVEL + 1];
-    // the deepest level of leveled bitmap indexes
+    unsigned long *mLevCommaBitmap[MAX_LEVEL];
+    // the deepest level of leveled bitmap indexes (starting from 0)
     int mDepth;
     
   public:
     SerialBitmap();
-    SerialBitmap(char* record, int depth);
+    SerialBitmap(char* record, int level_num);
     ~SerialBitmap();
     void indexConstruction();
     void setRecordLength(long length);

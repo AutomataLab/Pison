@@ -25,11 +25,11 @@ SerialBitmap::SerialBitmap() {
 
 }
 
-SerialBitmap::SerialBitmap(char* record, int depth) {
+SerialBitmap::SerialBitmap(char* record, int level_num) {
     this->mRecord = record;
-    this->mDepth = depth;
+    this->mDepth = level_num - 1;
     this->mQuoteBitmap = NULL;
-    for (int i = 0; i <= depth; ++i) {
+    for (int i = 0; i <= this->mDepth; ++i) {
         this->mLevColonBitmap[i] = NULL;
         this->mLevCommaBitmap[i] = NULL;
     }
@@ -254,6 +254,6 @@ void SerialBitmap::indexConstruction() {
 	    }
         }
     }
-    if (mDepth == MAX_LEVEL) mDepth = max_positive_level;
+    if (mDepth == MAX_LEVEL - 1) mDepth = max_positive_level;
     //cout<<"cur level "<<cur_level<<endl;
 }
