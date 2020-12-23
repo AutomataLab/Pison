@@ -3,9 +3,10 @@
 #include "../src/BitmapConstructor.h"
 
 // $.products[*].categoryPath[1:3].id
-void query(BitmapIterator* iter, string& output, long& output_size) {
+string query(BitmapIterator* iter) {
+    string output = "";
     if (iter->isObject() && iter->moveToKey("products")) {
-        if (iter->down() == false) return;  /* value of "products" */
+        if (iter->down() == false) return output;  /* value of "products" */
         while (iter->isArray() && iter->moveNext() == true) {
             if (iter->down() == false) continue;
             if (iter->isObject() && iter->moveToKey("categoryPath")) {
@@ -18,9 +19,7 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
                             if (iter->isObject() && iter->moveToKey("id")) {
                                 // value of "id"
                                 char* value = iter->getValue();
-                                output.append(value);
-                                output.append("|");
-                                ++output_size;
+                                output.append(value).append(";");
                                 if (value) free(value);
                             }
                             iter->up();
@@ -33,6 +32,7 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
         }
         iter->up();
     }
+    return output;
 }
 
 int main() {
@@ -42,16 +42,17 @@ int main() {
         cout<<"record loading fails."<<endl;
         return -1;
     }
-    // structural index construction in sequential, create bitmaps at all levels
+
+    /* process the input record in serial order: first build bitmap,
+     * then perform the query with a bitmap iterator
+     */
     Bitmap* bm = BitmapConstructor::construct(rec);
     BitmapIterator* iter = BitmapConstructor::getIterator(bm);
-    // query execution
-    string output;
-    long output_size = 0;
-    query(iter, output, output_size);
-    cout<<"the total number of output matches is "<<output_size<<endl;
+    string output = query(iter);
     delete iter;
     delete bm;
     delete rec;
+
+    cout<<"matches are: "<<output<<endl;    
     return 0;
 }

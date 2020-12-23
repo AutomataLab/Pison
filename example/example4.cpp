@@ -3,9 +3,10 @@
 #include "../src/BitmapConstructor.h"
 
 // $.categoryPath[1:3].id
-void query(BitmapIterator* iter, string& output, long& output_size) {
+string query(BitmapIterator* iter) {
+    string output = "";
     if (iter->isObject() && iter->moveToKey("categoryPath")) {
-        if (iter->down() == false) return; /* value of "categoryPath" */
+        if (iter->down() == false) return output; /* value of "categoryPath" */
         if (iter->isArray()) {
             for (int idx = 1; idx <= 2; ++idx) {
                 // 2nd and 3rd elements inside "categoryPath" array
@@ -14,9 +15,7 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
                     if (iter->isObject() && iter->moveToKey("id")) {
                         // value of "id"
                         char* value = iter->getValue();
-                        output.append(value);
-                        output.append("|");
-                        ++output_size;
+                        output.append(value).append(";");
                         if (value) free(value);
                     }
                     iter->up();
@@ -25,6 +24,7 @@ void query(BitmapIterator* iter, string& output, long& output_size) {
         }
         iter->up();
     }
+    return output;
 }
 
 int main() {
@@ -34,21 +34,31 @@ int main() {
         cout<<"record loading fails."<<endl;
         return -1;
     }
-    string output;
-    long output_size = 0;
-    // visit each record sequentially
-    int cur_idx = 0;
-    int end_idx = record_set->size();
+    string output = "";
+
+    // set the number of threads for parallel bitmap construction
     int thread_num = 1;
+
+    /* set the maximal level of bitmaps (starting from 0) to create, either based on
+     * query or JSON records (e.g., a query like $.a.b[4] has two levels, but the record
+     * may be of more than two levels)
+     */
     int max_level = 2;
-    while (cur_idx < end_idx) {
-        Bitmap* bm = BitmapConstructor::construct((*record_set)[cur_idx], thread_num, max_level);
+
+    /* process the records one by one: for each one, first build bitmap, then perform
+     * the query with a bitmap iterator
+     */
+    int num_recs = record_set->size();
+    Bitmap* bm = NULL;
+    for (int i = 0; i < num_recs; i++) {
+        bm = BitmapConstructor::construct((*record_set)[i], thread_num, max_level);
         BitmapIterator* iter = BitmapConstructor::getIterator(bm);
-        query(iter, output, output_size);
+        output.append(query(iter));
         delete iter;
-        delete bm;
-        ++cur_idx;
     }
-    cout<<"the total number of output matches is "<<output_size<<endl;
+    delete bm;
+    delete record_set;
+
+    cout<<"matches are: "<<output<<endl;
     return 0;
 }
