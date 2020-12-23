@@ -79,7 +79,7 @@ More detailed evaluation can be found in our VLDB'21 paper (see reference above)
 - `static Record* loadSingleRecord(char* file_path)`: loads the whole input file as one single record (allow newlines in strings and other legal places). 
 - `static RecordSet* loadRecords(char* file_path)`: loads multiple records from the input file (all newlines are treated as delimiters; no newlines (except for `\n` and `\r` in JSON strings) are allowed within a record); `RecordSet` can be accessed in array style (see `example3.cpp` and `example4.cpp` in `example` folder).
 ### Generating Leveled Bitmap Indices (Class: BitmapConstructor)
-- `static Bitmap* construct(Record* record, int thread_num = 1, int level = MAX_LEVEL)`: constructs leveled bitmaps for a single record in parallel (indicated by `thread_num`); bitmap indices can be created based on the maximum level of given queries (indicated by `level`).
+- `static Bitmap* construct(Record* record, int thread_num = 1, int level = MAX_LEVEL)`: constructs leveled bitmaps for a single record in parallel (indicated by `thread_num`); bitmap indices can be created based on the maximum level of given queries (indicated by `level` (starting from 0)).
 - `static BitmapIterator* getIterator(Bitmap* bi)`: creates iterator for bitmap indices.
 ### Bitmap Indices Iterator (Class: BitmapIterator)
 - `BitmapIterator* getCopy()`: gets a copy of an iterator (used for parallel accessing).
