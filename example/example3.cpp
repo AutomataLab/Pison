@@ -55,7 +55,7 @@ int main() {
      * the query with a bitmap iterator
      */
     int num_recs = record_set->size();
-    Bitmap* bm = null;   // allocate 
+    Bitmap* bm = null; 
     for (int i = 0; i < num_recs; i++) {
         bm = BitmapConstructor::construct((*record_set)[i], thread_num, max_level);
         output = query(BitmapConstructor::getIterator(bm));
