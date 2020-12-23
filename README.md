@@ -6,7 +6,7 @@ For more details about Pison, please refer to our paper [1].
 The original idea of JSON structural index construction was proposed in Mison [2]. The major improvement of Pison over Mison is the capability of building structure index for **a single large JSON record** in parallel. In addition, it optimizes the index construction steps, including adopting some bitwise operations used in [simdjson](https://github.com/simdjson/simdjson), to further enhance the performance. 
 
 ## Publications
-[1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. Scalable Structural Index Construction for JSON Analytics. PVLDB, 14(4):694-707, 2021.
+[1] Lin Jiang, Junqiao Qiu, Zhijia Zhao. [Scalable Structural Index Construction for JSON Analytics](https://vldb.org/pvldb/vol14/p694-zhao.pdf). PVLDB, 14(4):694-707, 2021.
 
 [2] Yinan Li, Nikos R. Katsipoulakis, Badrish Chandramouli, Jonathan  Goldstein, D. Kossmann. Mison: A Fast JSON Parser for Data Analytics. PVLDB, 10(10): 2017.
 
