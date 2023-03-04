@@ -31,7 +31,7 @@ int main() {
     }
 
     // set the number of threads for parallel bitmap construction
-    int thread_num = 16;
+    int thread_num = 1;
 
     /* set the number of levels of bitmaps to create, either based on the
      * query or the JSON records. E.g., query $[*].user.id needs three levels 
