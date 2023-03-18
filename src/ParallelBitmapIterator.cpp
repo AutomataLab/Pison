@@ -26,7 +26,7 @@ CommaPosInfo comma_pos_info[MAX_THREAD];
 int num_of_threads = 1;
 
 void* generateCommaPositionsInThread(void* arg) {
-    int thread_id = (int)(*((int*)arg));;
+    int thread_id = *((int*)arg);
     int level = comma_pos_info[thread_id].level;
     long start_pos = comma_pos_info[thread_id].start_pos;
     long end_pos = comma_pos_info[thread_id].end_pos;
@@ -50,10 +50,7 @@ void* generateCommaPositionsInThread(void* arg) {
     long st = cur_start_pos > (start_pos / 64) ? cur_start_pos : (start_pos / 64);
     long ed = cur_end_pos < (ceil(double(end_pos) / 64)) ? cur_end_pos : (ceil(double(end_pos) / 64));
     for (long i = st; i < ed; ++i) {
-        unsigned long idx = 0;
-        if (thread_id >= 1) idx = i - cur_start_pos;
-        else idx = i;
-        commabit = levels[idx];
+        commabit = levels[thread_id >= 1 ? i - cur_start_pos : i];
         int cnt = __builtin_popcountl(commabit);
         while (commabit) {
             long offset = i * 64 + __builtin_ctzll(commabit);
@@ -62,8 +59,10 @@ void* generateCommaPositionsInThread(void* arg) {
             }
             commabit = commabit & (commabit - 1);
         }
-    }    
+    }
+    return NULL;
 }
+
 
 void ParallelBitmapIterator::generateCommaPositionsParallel(long start_pos, long end_pos, int level, long* comma_positions, long& top_comma_positions) {
     // find starting and ending chunks in linked leveled comma bitmaps
