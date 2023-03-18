@@ -31,7 +31,7 @@ int main() {
     }
 
     // set the number of threads for parallel bitmap construction
-    int thread_num = 1;
+    int thread_num = 16;
 
     /* set the number of levels of bitmaps to create, either based on the
      * query or the JSON records. E.g., query $[*].user.id needs three levels 
@@ -42,6 +42,7 @@ int main() {
     /* process the input record: first build bitmap, then perform 
      * the query with a bitmap iterator
      */
+    cout<<"Threads used: "<<thread_num<<endl;
     Bitmap* bm = BitmapConstructor::construct(rec, thread_num, level_num);
     BitmapIterator* iter = BitmapConstructor::getIterator(bm);
     string output = query(iter);
