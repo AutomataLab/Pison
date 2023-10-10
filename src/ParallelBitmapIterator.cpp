@@ -62,7 +62,8 @@ void* generateCommaPositionsInThread(void* arg) {
             }
             commabit = commabit & (commabit - 1);
         }
-    }    
+    }
+    return NULL;    
 }
 
 void ParallelBitmapIterator::generateCommaPositionsParallel(long start_pos, long end_pos, int level, long* comma_positions, long& top_comma_positions) {
