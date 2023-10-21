@@ -40,7 +40,7 @@ int main() {
     }
     string output = "";
     
-    // set the number of threads for parallel bitmap construction
+    // fix the number of threads to 1 for small records scenario; parallel bitmap construction is TBD. 
     int thread_num = 1;  
    
     /* set the number of levels of bitmaps to create, either based on the
