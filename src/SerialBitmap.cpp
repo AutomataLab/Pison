@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <sched.h>
 #include <unordered_map>
+#include <cstdint>
 using namespace std;
 
 SerialBitmap::SerialBitmap() {

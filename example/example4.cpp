@@ -1,12 +1,23 @@
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <mutex>
+#include <cstring>
+#include <unordered_set>
 #include "../src/RecordLoader.h"
 #include "../src/BitmapIterator.h"
 #include "../src/BitmapConstructor.h"
 
-// $.categoryPath[1:3].id
+using namespace std;
+
+// Define a mutex for thread-safe appending to the output string
+mutex output_mutex;
+
+// The query function processes the JSON records according to the specified keys
 string query(BitmapIterator* iter) {
     string output = "";
     if (iter->isObject() && iter->moveToKey("categoryPath")) {
-        if (iter->down() == false) return output; /* value of "categoryPath" */
+        if (iter->down() == false) return output; // value of "categoryPath"
         if (iter->isArray()) {
             for (int idx = 1; idx <= 2; ++idx) {
                 // 2nd and 3rd elements inside "categoryPath" array
@@ -27,38 +38,51 @@ string query(BitmapIterator* iter) {
     return output;
 }
 
+// Function to process a subset of records
+void process_records(RecordSet* record_set, int start, int end, string& output) {
+    for (int i = start; i < end; i++) {
+        Bitmap* bm = BitmapConstructor::construct((*record_set)[i], 1, 3); // Each thread uses 1 thread internally
+        BitmapIterator* iter = BitmapConstructor::getIterator(bm);
+        string local_output = query(iter);
+        delete iter;
+        delete bm;
+
+        // Lock the mutex before appending to the shared output string
+        output_mutex.lock();
+        output.append(local_output);
+        output_mutex.unlock();
+    }
+}
+
 int main() {
     char* file_path = "../dataset/bestbuy_sample_small_records.json";
     RecordSet* record_set = RecordLoader::loadRecords(file_path);
     if (record_set->size() == 0) {
-        cout<<"record loading fails."<<endl;
+        cout << "record loading fails." << endl;
         return -1;
     }
     string output = "";
+    
+    int thread_num = std::thread::hardware_concurrency(); // Use as many threads as there are CPU cores
+    std::vector<std::thread> threads;
 
-    // fix the number of threads to 1 for small records scenario; parallel bitmap construction is TBD. 
-    int thread_num = 1;
-
-    /* set the number of levels of bitmaps to create, either based on the
-     * query or the JSON records. E.g., query $[*].user.id needs three levels
-     * (level 0, 1, 2), but the record may be of more than three levels
-     */
-    int level_num = 3;
-
-    /* process the records one by one: for each one, first build bitmap, then perform
-     * the query with a bitmap iterator
-     */
-    int num_recs = record_set->size();
-    Bitmap* bm = NULL;
-    for (int i = 0; i < num_recs; i++) {
-        bm = BitmapConstructor::construct((*record_set)[i], thread_num, level_num);
-        BitmapIterator* iter = BitmapConstructor::getIterator(bm);
-        output.append(query(iter));
-        delete iter;
+    // Calculate the number of records each thread should process
+    int num_recs_per_thread = record_set->size() / thread_num;
+    for (int i = 0; i < thread_num; i++) {
+        int start = i * num_recs_per_thread;
+        int end = (i == thread_num - 1) ? record_set->size() : (i + 1) * num_recs_per_thread;
+        threads.emplace_back(process_records, record_set, start, end, ref(output));
     }
-    delete bm;
+
+    // Wait for all threads to finish
+    for (auto& t : threads) {
+        if (t.joinable()) {
+            t.join();
+        }
+    }
+
     delete record_set;
 
-    cout<<"matches are: "<<output<<endl;
+    cout << "matches are: " << output << endl;
     return 0;
 }

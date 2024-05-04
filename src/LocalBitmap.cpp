@@ -16,6 +16,7 @@
 #include <sys/file.h>
 #include <unistd.h>
 #include <sched.h>
+#include <cstdint>
 #include <unordered_map>
 using namespace std;
 
