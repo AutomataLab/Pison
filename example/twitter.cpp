@@ -20,7 +20,7 @@ unordered_map<string, int> counts;
 // The query function processes the JSON records according to the specified keys
 void query(BitmapIterator* iter) {
     if (iter->isObject()) {
-        // Extracting the "categoryPath" IDs as per the BB JSONPath Query
+        
         if (iter->moveToKey("user")) {
         if (iter->down()) {
             if (iter->moveToKey("lang")) {
