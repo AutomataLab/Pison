@@ -4,6 +4,7 @@
 #include <mutex>
 #include <cstring>
 #include <unordered_set>
+#include <chrono> 
 #include "../src/RecordLoader.h"
 #include "../src/BitmapIterator.h"
 #include "../src/BitmapConstructor.h"
@@ -54,19 +55,17 @@ void process_records(RecordSet* record_set, int start, int end) {
 
 int main() {
     // Initialize counts map with all query IDs set to 0
-  
     counts["TT"] = 0;
-    
 
     char* file_path = "../dataset/twitter_small_records.json";
     RecordSet* record_set = RecordLoader::loadRecords(file_path);
     if (record_set->size() == 0) {
-        cout << "record loading fails." << endl;
+        cout << "Record loading failed." << endl;
         return -1;
     }
-    
+
     int thread_num = std::thread::hardware_concurrency(); // Use as many threads as there are CPU cores
-    std::vector<std::thread> threads;
+    vector<thread> threads;
 
     // Calculate the number of records each thread should process
     int num_recs_per_thread = record_set->size() / thread_num;
@@ -76,6 +75,9 @@ int main() {
         threads.emplace_back(process_records, record_set, start, end);
     }
 
+    // Start the timer
+    auto start_time = chrono::high_resolution_clock::now();
+
     // Wait for all threads to finish
     for (auto& t : threads) {
         if (t.joinable()) {
@@ -83,12 +85,16 @@ int main() {
         }
     }
 
-    delete record_set;
+    // Stop the timer
+    auto end_time = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> elapsed_time = end_time - start_time;
 
     // Output the counts in the specified format
     cout << "ID\tJSONPath Query\tNumber of Matches" << endl;
     cout << "TT\t{$.user.lang, $.lang}\t" << counts["TT"] << endl;
-   
+    cout << "Execution time: " << elapsed_time.count() << " ms" << endl;
+
+    delete record_set;
 
     return 0;
 }

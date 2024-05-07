@@ -4,6 +4,7 @@
 #include <mutex>
 #include <cstring>
 #include <unordered_set>
+#include <chrono> 
 #include "../src/RecordLoader.h"
 #include "../src/BitmapIterator.h"
 #include "../src/BitmapConstructor.h"
@@ -54,19 +55,20 @@ void process_records(RecordSet* record_set, int start, int end) {
 
 int main() {
     // Initialize counts map with all query IDs set to 0
-  
     counts["BB"] = 0;
-    
 
     char* file_path = "../dataset/bestbuy_small_records.json";
     RecordSet* record_set = RecordLoader::loadRecords(file_path);
     if (record_set->size() == 0) {
-        cout << "record loading fails." << endl;
+        cout << "Record loading failed." << endl;
         return -1;
     }
-    
+
     int thread_num = std::thread::hardware_concurrency(); // Use as many threads as there are CPU cores
-    std::vector<std::thread> threads;
+    vector<thread> threads;
+
+    // Start the timer
+    auto start_time = chrono::high_resolution_clock::now();
 
     // Calculate the number of records each thread should process
     int num_recs_per_thread = record_set->size() / thread_num;
@@ -83,12 +85,16 @@ int main() {
         }
     }
 
+    // Stop the timer
+    auto end_time = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> elapsed_time = end_time - start_time;
+
     delete record_set;
 
     // Output the counts in the specified format
     cout << "ID\tJSONPath Query\tNumber of Matches" << endl;
     cout << "BB\t{$.categoryPath[1:3].id}\t" << counts["BB"] << endl;
-   
+    cout << "Execution time: " << elapsed_time.count() << " ms" << endl;
 
     return 0;
 }
