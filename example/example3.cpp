@@ -59,8 +59,8 @@ int main() {
         BitmapIterator* iter = BitmapConstructor::getIterator(bm);
         output.append(query(iter));
         delete iter;
+        delete bm;
     }
-    delete bm;
     delete record_set;
     
     cout<<"matches are: "<<output<<endl;
