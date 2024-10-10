@@ -17,7 +17,7 @@ The original idea of JSON structural index construction was proposed in Mison [2
 - **C++ Compiler**: `g++` (7.4.0 or higher)
 
 ### Dataset
-Four sample datasets are included in `dataset` folder. Large datasets (used in performance evaluation) can be downloaded from https://drive.google.com/drive/folders/1KQ1DjvIWpHikOg1JgmjlSWM3aAlvq-h7?usp=sharing and placed into the `dataset` folder. 
+Four sample datasets are included in `dataset` folder. Large datasets (used in performance evaluation) can be downloaded from https://drive.google.com/drive/folders/1157Uho73N3b4e2a7ZI7CUx9gpdG_0pmM?usp=drive_link and placed into the `dataset` folder. 
 
 ### Examples
 A few examples (in `cpp` files) are provided in the `example` folder. They demostrate how to use our APIs to implement JSON queries. To create and test your examples, please update the `makefile` accordingly.
